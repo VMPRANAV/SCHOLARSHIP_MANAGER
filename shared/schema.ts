@@ -38,6 +38,30 @@ export const insertAdminUserSchema = createInsertSchema(adminUsers).omit({
 });
 
 export type InsertScholarship = z.infer<typeof insertScholarshipSchema>;
-export type Scholarship = typeof scholarships.$inferSelect;
 export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
-export type AdminUser = typeof adminUsers.$inferSelect;
+
+// MongoDB-compatible types
+export interface Scholarship {
+  id: string;
+  name: string;
+  organizationLogo: string | null;
+  amount: string;
+  educationLevel: string;
+  applicationEndDate: string;
+  description: string;
+  eligibility: string;
+  community: string | null;
+  genderRequirement: string | null;
+  applicationLink: string | null;
+  applicationFormPath: string | null;
+  status: string;
+  createdAt: Date | null;
+}
+
+export interface AdminUser {
+  id: string;
+  username: string;
+  password: string;
+  email: string | null;
+  createdAt: Date | null;
+}

@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import express from "express";
 import { createServer, type Server } from "http";
-import { storage } from "./storage";
+import { getDatabase } from "./database";
 import { insertScholarshipSchema } from "@shared/schema";
 import multer from "multer";
 import path from "path";
@@ -47,7 +47,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/scholarships", async (req, res) => {
     try {
       const { educationLevel, status, search } = req.query;
-      const scholarships = await storage.getScholarships({
+      const database = getDatabase();
+      const scholarships = await database.getScholarships({
         educationLevel: educationLevel as string,
         status: status as string,
         search: search as string,
@@ -61,8 +62,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get scholarship by ID
   app.get("/api/scholarships/:id", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const scholarship = await storage.getScholarship(id);
+      const id = req.params.id;
+      const database = getDatabase();
+      const scholarship = await database.getScholarship(id);
       if (!scholarship) {
         return res.status(404).json({ message: "Scholarship not found" });
       }
@@ -97,7 +99,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Validate the data
       const validatedData = insertScholarshipSchema.parse(scholarshipData);
       
-      const scholarship = await storage.createScholarship(validatedData);
+      const database = getDatabase();
+      const scholarship = await database.createScholarship(validatedData);
       res.status(201).json(scholarship);
     } catch (error) {
       console.error("Error creating scholarship:", error);
@@ -111,7 +114,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     { name: 'applicationForm', maxCount: 1 }
   ]), async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
+      const id = req.params.id;
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       
       const updates = { ...req.body };
@@ -127,7 +130,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         updates.applicationFormPath = `/uploads/${files.applicationForm[0].filename}`;
       }
 
-      const scholarship = await storage.updateScholarship(id, updates);
+      const database = getDatabase();
+      const scholarship = await database.updateScholarship(id, updates);
       if (!scholarship) {
         return res.status(404).json({ message: "Scholarship not found" });
       }
@@ -140,8 +144,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Delete scholarship
   app.delete("/api/scholarships/:id", async (req, res) => {
     try {
-      const id = parseInt(req.params.id);
-      const success = await storage.deleteScholarship(id);
+      const id = req.params.id;
+      const database = getDatabase();
+      const success = await database.deleteScholarship(id);
       if (!success) {
         return res.status(404).json({ message: "Scholarship not found" });
       }
@@ -155,7 +160,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.post("/api/admin/login", async (req, res) => {
     try {
       const { username, password } = req.body;
-      const admin = await storage.getAdminUserByUsername(username);
+      const database = getDatabase();
+      const admin = await database.getAdminUserByUsername(username);
       
       if (!admin || admin.password !== password) {
         return res.status(401).json({ message: "Invalid credentials" });

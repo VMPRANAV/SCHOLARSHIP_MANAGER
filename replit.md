@@ -27,11 +27,12 @@ Preferred communication style: Simple, everyday language.
 - **Development**: Development server with hot reload and request logging
 
 ### Data Storage Solutions
-- **Database**: PostgreSQL (configured for production)
-- **ORM**: Drizzle ORM for type-safe database operations
-- **Schema Management**: Drizzle Kit for migrations
-- **Development Storage**: In-memory storage for development/testing
+- **Database**: MongoDB with automatic fallback to in-memory storage
+- **Schema**: Defined in shared/schema.ts with MongoDB-compatible interface
+- **Connection**: Automatic fallback system - tries MongoDB first, falls back to in-memory storage
+- **Development Storage**: In-memory storage for development/testing (current fallback mode)
 - **File Storage**: Local filesystem for uploaded files (logos and application forms)
+- **Database Interface**: IDatabase interface supports both MongoDB and in-memory implementations
 
 ## Key Components
 
@@ -76,9 +77,10 @@ Two main entities:
 - Date-fns for date formatting
 
 ### Backend Infrastructure
-- Neon Database for PostgreSQL hosting
+- MongoDB for persistent data storage (with automatic fallback)
 - Multer for file upload handling
-- Connect-pg-simple for session storage
+- Express session management
+- Automatic database connection management
 
 ## Deployment Strategy
 
@@ -92,13 +94,14 @@ Two main entities:
 - Vite builds optimized frontend bundle
 - ESBuild compiles backend TypeScript to ESM
 - Static files served by Express
-- PostgreSQL database connection required
-- Environment variables for database URL and configuration
+- MongoDB database connection (with in-memory fallback for development)
+- Environment variables: MONGODB_URI, MONGODB_DB_NAME (optional)
 
 ### Environment Configuration
-- Development: Uses local storage and development features
-- Production: Requires DATABASE_URL environment variable
-- File uploads: Configurable upload directory
-- Session management: PostgreSQL-backed sessions in production
+- Development: Uses in-memory storage with automatic fallback
+- Production: Optional MONGODB_URI for MongoDB connection
+- File uploads: Configurable upload directory (defaults to ./uploads)
+- Session management: Express session handling
+- Database: Automatic detection and fallback system ensures reliability
 
 The application follows a monorepo structure with shared schema definitions between frontend and backend, ensuring type safety across the full stack. The architecture supports both development convenience and production scalability.

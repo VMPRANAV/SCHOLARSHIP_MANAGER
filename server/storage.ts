@@ -3,20 +3,20 @@ import { scholarships, adminUsers, type Scholarship, type InsertScholarship, typ
 export interface IStorage {
   // Scholarship methods
   getScholarships(filters?: { educationLevel?: string; status?: string; search?: string }): Promise<Scholarship[]>;
-  getScholarship(id: number): Promise<Scholarship | undefined>;
+  getScholarship(id: string): Promise<Scholarship | undefined>;
   createScholarship(scholarship: InsertScholarship): Promise<Scholarship>;
-  updateScholarship(id: number, scholarship: Partial<InsertScholarship>): Promise<Scholarship | undefined>;
-  deleteScholarship(id: number): Promise<boolean>;
+  updateScholarship(id: string, scholarship: Partial<InsertScholarship>): Promise<Scholarship | undefined>;
+  deleteScholarship(id: string): Promise<boolean>;
   
   // Admin methods
-  getAdminUser(id: number): Promise<AdminUser | undefined>;
+  getAdminUser(id: string): Promise<AdminUser | undefined>;
   getAdminUserByUsername(username: string): Promise<AdminUser | undefined>;
   createAdminUser(user: InsertAdminUser): Promise<AdminUser>;
 }
 
 export class MemStorage implements IStorage {
-  private scholarships: Map<number, Scholarship>;
-  private adminUsers: Map<number, AdminUser>;
+  private scholarships: Map<string, Scholarship>;
+  private adminUsers: Map<string, AdminUser>;
   private currentScholarshipId: number;
   private currentAdminId: number;
 
@@ -26,15 +26,20 @@ export class MemStorage implements IStorage {
     this.currentScholarshipId = 1;
     this.currentAdminId = 1;
 
+    // Initialize with sample data
+    this.initSampleData();
+  }
+
+  private async initSampleData() {
     // Add default admin user
-    this.createAdminUser({
+    await this.createAdminUser({
       username: "admin",
       password: "admin123", // In production, this should be hashed
       email: "admin@scholarshiphub.edu"
     });
 
     // Add some sample scholarships
-    this.createScholarship({
+    await this.createScholarship({
       name: "MIT Excellence Scholarship",
       organizationLogo: "MIT",
       amount: "25000",
@@ -49,7 +54,7 @@ export class MemStorage implements IStorage {
       status: "active"
     });
 
-    this.createScholarship({
+    await this.createScholarship({
       name: "Stanford Research Grant",
       organizationLogo: "SF",
       amount: "15000",
@@ -64,7 +69,7 @@ export class MemStorage implements IStorage {
       status: "active"
     });
 
-    this.createScholarship({
+    await this.createScholarship({
       name: "Georgia Tech Merit Award",
       organizationLogo: "GT",
       amount: "12500",
@@ -79,7 +84,7 @@ export class MemStorage implements IStorage {
       status: "active"
     });
 
-    this.createScholarship({
+    await this.createScholarship({
       name: "Harvard Leadership Fund",
       organizationLogo: "H",
       amount: "50000",
@@ -94,7 +99,7 @@ export class MemStorage implements IStorage {
       status: "active"
     });
 
-    this.createScholarship({
+    await this.createScholarship({
       name: "NYU Innovation Grant",
       organizationLogo: "NY",
       amount: "18000",
@@ -109,7 +114,7 @@ export class MemStorage implements IStorage {
       status: "active"
     });
 
-    this.createScholarship({
+    await this.createScholarship({
       name: "UC Berkeley Research Fund",
       organizationLogo: "UC",
       amount: "22000",
@@ -148,12 +153,12 @@ export class MemStorage implements IStorage {
     return result;
   }
 
-  async getScholarship(id: number): Promise<Scholarship | undefined> {
+  async getScholarship(id: string): Promise<Scholarship | undefined> {
     return this.scholarships.get(id);
   }
 
   async createScholarship(insertScholarship: InsertScholarship): Promise<Scholarship> {
-    const id = this.currentScholarshipId++;
+    const id = (this.currentScholarshipId++).toString();
     const scholarship: Scholarship = { 
       ...insertScholarship,
       organizationLogo: insertScholarship.organizationLogo || null,
@@ -169,7 +174,7 @@ export class MemStorage implements IStorage {
     return scholarship;
   }
 
-  async updateScholarship(id: number, updates: Partial<InsertScholarship>): Promise<Scholarship | undefined> {
+  async updateScholarship(id: string, updates: Partial<InsertScholarship>): Promise<Scholarship | undefined> {
     const existing = this.scholarships.get(id);
     if (!existing) return undefined;
 
@@ -178,11 +183,11 @@ export class MemStorage implements IStorage {
     return updated;
   }
 
-  async deleteScholarship(id: number): Promise<boolean> {
+  async deleteScholarship(id: string): Promise<boolean> {
     return this.scholarships.delete(id);
   }
 
-  async getAdminUser(id: number): Promise<AdminUser | undefined> {
+  async getAdminUser(id: string): Promise<AdminUser | undefined> {
     return this.adminUsers.get(id);
   }
 
@@ -193,7 +198,7 @@ export class MemStorage implements IStorage {
   }
 
   async createAdminUser(insertUser: InsertAdminUser): Promise<AdminUser> {
-    const id = this.currentAdminId++;
+    const id = (this.currentAdminId++).toString();
     const user: AdminUser = { 
       ...insertUser,
       email: insertUser.email || null,
