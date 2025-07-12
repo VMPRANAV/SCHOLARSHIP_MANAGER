@@ -10,12 +10,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { scholarshipApi } from "@/lib/api";
 import AddScholarshipForm from "./add-scholarship-form";
+import EditScholarshipForm from "./edit-scholarship-form";
+import ScholarshipDetailModal from "./scholarship-detail-modal";
 import type { Scholarship } from "@shared/schema";
 
 export default function AdminDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [isAddFormOpen, setIsAddFormOpen] = useState(false);
+  const [isEditFormOpen, setIsEditFormOpen] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [selectedScholarship, setSelectedScholarship] = useState<Scholarship | null>(null);
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -49,6 +54,26 @@ export default function AdminDashboard() {
     if (confirm('Are you sure you want to delete this scholarship?')) {
       deleteMutation.mutate(id);
     }
+  };
+
+  const handleEdit = (scholarship: Scholarship) => {
+    setSelectedScholarship(scholarship);
+    setIsEditFormOpen(true);
+  };
+
+  const handleView = (scholarship: Scholarship) => {
+    setSelectedScholarship(scholarship);
+    setIsViewModalOpen(true);
+  };
+
+  const closeEditForm = () => {
+    setIsEditFormOpen(false);
+    setSelectedScholarship(null);
+  };
+
+  const closeViewModal = () => {
+    setIsViewModalOpen(false);
+    setSelectedScholarship(null);
   };
 
   const formatAmount = (amount: string) => {
@@ -267,10 +292,20 @@ export default function AdminDashboard() {
                       </TableCell>
                       <TableCell>
                         <div className="flex space-x-2">
-                          <Button size="sm" variant="ghost">
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            onClick={() => handleEdit(scholarship)}
+                            title="Edit scholarship"
+                          >
                             <Edit className="h-4 w-4 text-education-blue" />
                           </Button>
-                          <Button size="sm" variant="ghost">
+                          <Button 
+                            size="sm" 
+                            variant="ghost"
+                            onClick={() => handleView(scholarship)}
+                            title="View scholarship details"
+                          >
                             <Eye className="h-4 w-4 text-slate-600" />
                           </Button>
                           <Button 
@@ -278,6 +313,7 @@ export default function AdminDashboard() {
                             variant="ghost"
                             onClick={() => handleDelete(scholarship.id)}
                             disabled={deleteMutation.isPending}
+                            title="Delete scholarship"
                           >
                             <Trash2 className="h-4 w-4 text-red-600" />
                           </Button>
@@ -295,6 +331,18 @@ export default function AdminDashboard() {
       <AddScholarshipForm 
         isOpen={isAddFormOpen} 
         onClose={() => setIsAddFormOpen(false)} 
+      />
+
+      <EditScholarshipForm 
+        scholarship={selectedScholarship}
+        isOpen={isEditFormOpen} 
+        onClose={closeEditForm} 
+      />
+
+      <ScholarshipDetailModal
+        scholarship={selectedScholarship}
+        isOpen={isViewModalOpen}
+        onClose={closeViewModal}
       />
     </div>
   );
