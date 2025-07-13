@@ -101,8 +101,8 @@ export default function AdminDashboard() {
     return name.split(' ').map(word => word[0]).join('').substring(0, 3);
   };
 
-  const activeScholarships = scholarships.filter(s => s.status === 'active');
-  const totalAmount = scholarships.reduce((sum, s) => sum + parseFloat(s.amount), 0);
+  const activeScholarships = scholarships.filter((s: Scholarship) => s.status === 'active');
+  const totalAmount = scholarships.reduce((sum: number, s: Scholarship) => sum + parseFloat(s.amount), 0);
 
   return (
     <div className="flex-1 bg-slate-100 overflow-auto">
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
                           <Button 
                             size="sm" 
                             variant="ghost"
-                            onClick={() => handleDelete(scholarship.id)}
+                            onClick={() => handleDelete(parseInt(scholarship.id))}
                             disabled={deleteMutation.isPending}
                             title="Delete scholarship"
                           >

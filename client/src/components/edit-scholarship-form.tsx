@@ -43,7 +43,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
       description: "",
       eligibility: "",
       community: "",
-      genderRequirement: "",
+      genderRequirement: "All Genders",
       applicationLink: "",
       status: "active",
     },
@@ -60,7 +60,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
         description: scholarship.description,
         eligibility: scholarship.eligibility,
         community: scholarship.community || "",
-        genderRequirement: scholarship.genderRequirement || "",
+        genderRequirement: scholarship.genderRequirement || "All Genders",
         applicationLink: scholarship.applicationLink || "",
         status: scholarship.status,
       });
@@ -80,7 +80,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
       if (logoFile) formData.append('logo', logoFile);
       if (formFile) formData.append('applicationForm', formFile);
       
-      return scholarshipApi.update(scholarship.id, formData);
+      return scholarshipApi.update(parseInt(scholarship.id), formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/scholarships'] });
@@ -171,7 +171,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Education Level</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value ?? ""}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="Select Level" />
@@ -271,7 +271,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
                   <FormItem>
                     <FormLabel>Target Community</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., STEM Students, International Students" {...field} />
+                      <Input placeholder="e.g., STEM Students, International Students" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -284,7 +284,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Gender Requirements</FormLabel>
-                    <Select onValueChange={field.onChange} value={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value ?? ""}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="All Genders" />
@@ -310,7 +310,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
                 <FormItem>
                   <FormLabel>Application Link</FormLabel>
                   <FormControl>
-                    <Input type="url" placeholder="https://example.com/apply" {...field} />
+                    <Input type="url" placeholder="https://example.com/apply" {...field} value={field.value ?? ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -323,7 +323,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Status</FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value ?? ""}>
                     <FormControl>
                       <SelectTrigger>
                         <SelectValue placeholder="Select Status" />

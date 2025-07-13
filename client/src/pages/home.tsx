@@ -6,31 +6,71 @@ import Footer from "@/components/footer";
 import ScholarshipCard from "@/components/scholarship-card";
 import ScholarshipDetailModal from "@/components/scholarship-detail-modal";
 import KPRSection from "@/components/kpr-section";
+import ScholarshipFilters, { FilterOptions } from "@/components/scholarship-filters";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast"; // Import useToast
 import { scholarshipApi } from "@/lib/api";
 import type { Scholarship } from "@shared/schema";
 
 export default function Home() {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [educationLevel, setEducationLevel] = useState("");
+  const [filters, setFilters] = useState<FilterOptions>({
+    search: "",
+    educationLevel: "all",
+    amountRange: [0, 100000],
+    deadlineRange: [null, null], // Initialize with Date | null
+    community: [],
+    genderRequirement: "All Genders",
+    sortBy: "name",
+    sortOrder: "asc"
+  });
   const [selectedScholarship, setSelectedScholarship] = useState<Scholarship | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const { toast } = useToast(); // Initialize useToast
 
-  const { data: scholarships = [], isLoading } = useQuery({
-    queryKey: ['/api/scholarships', { search: searchQuery, educationLevel }],
-    queryFn: () => scholarshipApi.getAll({ 
-      search: searchQuery, 
-      educationLevel: educationLevel === 'all' ? undefined : educationLevel, 
-      status: 'active' 
-    }),
+  // Convert Date objects to strings for API calls
+  const apiFilters = {
+    ...filters,
+    deadlineRange: [
+      filters.deadlineRange[0] || '',
+      filters.deadlineRange[1] || ''
+    ] as [string, string],
+    status: 'active'
+  };
+
+  const { data: scholarships = [], isLoading, error } = useQuery({
+    queryKey: ['scholarships', apiFilters],
+    queryFn: () => scholarshipApi.getAll(apiFilters),
+    staleTime: 2 * 60 * 1000,
   });
 
-  const handleSearch = () => {
-    // Query will automatically refetch due to reactive dependencies
+  // Show error notification if query fails
+  if (error) {
+    toast({
+      title: 'Error',
+      description: 'Failed to load scholarships. Please try again.',
+      variant: 'destructive',
+    });
+  }
+
+  const handleFiltersChange = (newFilters: FilterOptions) => {
+    setFilters(newFilters);
+  };
+
+  const handleClearFilters = () => {
+    setFilters({
+      search: "",
+      educationLevel: "all",
+      amountRange: [0, 100000],
+      deadlineRange: [null, null], // Reset to Date | null
+      community: [],
+      genderRequirement: "All Genders",
+      sortBy: "name",
+      sortOrder: "asc"
+    });
   };
 
   const handleViewMore = (scholarship: Scholarship) => {
@@ -57,17 +97,17 @@ export default function Home() {
           
           {/* Search and Filter Bar */}
           <div className="bg-white rounded-xl p-6 shadow-lg max-w-4xl mx-auto">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="md:col-span-2">
                 <Input
                   type="text"
                   placeholder="Search scholarships..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
+                  value={filters.search}
+                  onChange={(e) => handleFiltersChange({ ...filters, search: e.target.value })}
                   className="w-full text-slate-800"
                 />
               </div>
-              <Select value={educationLevel} onValueChange={setEducationLevel}>
+              <Select value={filters.educationLevel} onValueChange={(value) => handleFiltersChange({ ...filters, educationLevel: value })}>
                 <SelectTrigger className="text-slate-800">
                   <SelectValue placeholder="Education Level" />
                 </SelectTrigger>
@@ -79,10 +119,6 @@ export default function Home() {
                   <SelectItem value="PhD">PhD</SelectItem>
                 </SelectContent>
               </Select>
-              <Button onClick={handleSearch} className="bg-education-blue text-white hover:bg-blue-800">
-                <Search className="h-4 w-4 mr-2" />
-                Search
-              </Button>
             </div>
           </div>
         </div>
@@ -90,6 +126,14 @@ export default function Home() {
 
       {/* Main Content */}
       <main id="scholarships" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {/* Advanced Filters */}
+        <ScholarshipFilters
+          filters={filters}
+          onFiltersChange={handleFiltersChange}
+          onClearFilters={handleClearFilters}
+          totalResults={scholarships.length}
+        />
+
         <div className="flex justify-between items-center mb-8">
           <div>
             <h3 className="text-2xl font-bold text-slate-800 mb-2">Available Scholarships</h3>
@@ -98,16 +142,6 @@ export default function Home() {
             </p>
           </div>
           <div className="flex items-center space-x-4">
-            <Select>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Sort by Amount" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="amount">Sort by Amount</SelectItem>
-                <SelectItem value="deadline">Sort by Deadline</SelectItem>
-                <SelectItem value="name">Sort by Name</SelectItem>
-              </SelectContent>
-            </Select>
             <div className="flex border border-slate-300 rounded-lg overflow-hidden">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}

@@ -46,15 +46,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Get all scholarships with optional filters
   app.get("/api/scholarships", async (req, res) => {
     try {
-      const { educationLevel, status, search } = req.query;
+      const { 
+        educationLevel, 
+        status, 
+        search, 
+        amountMin, 
+        amountMax, 
+        deadlineFrom, 
+        deadlineTo, 
+        community, 
+        genderRequirement,
+        sortBy,
+        sortOrder
+      } = req.query;
+      
       const database = getDatabase();
       const scholarships = await database.getScholarships({
         educationLevel: educationLevel as string,
         status: status as string,
         search: search as string,
+        amountRange: amountMin && amountMax ? [parseInt(amountMin as string), parseInt(amountMax as string)] : undefined,
+        deadlineRange: deadlineFrom && deadlineTo ? [deadlineFrom as string, deadlineTo as string] : undefined,
+        community: community ? (Array.isArray(community) ? community as string[] : [community as string]) : undefined,
+        genderRequirement: genderRequirement as string,
+        sortBy: sortBy as string || 'name',
+        sortOrder: (sortOrder as 'asc' | 'desc') || 'asc'
       });
       res.json(scholarships);
     } catch (error) {
+      console.error("Error fetching scholarships:", error);
       res.status(500).json({ message: "Failed to fetch scholarships" });
     }
   });
@@ -79,10 +99,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
     { name: 'logo', maxCount: 1 },
     { name: 'applicationForm', maxCount: 1 }
   ]), async (req, res) => {
+    console.log('Incoming scholarship creation request body:', req.body);
+    console.log('Type of req.body.amount:', typeof req.body.amount);
     try {
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       
       // Parse the scholarship data
+      if (req.body.amount === undefined || req.body.amount === null) {
+        throw new Error("Amount is required");
+      }
       const scholarshipData = {
         ...req.body,
         amount: req.body.amount.toString(),

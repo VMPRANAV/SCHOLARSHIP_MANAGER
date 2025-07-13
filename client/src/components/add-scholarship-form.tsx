@@ -42,7 +42,7 @@ export default function AddScholarshipForm({ isOpen, onClose }: AddScholarshipFo
       description: "",
       eligibility: "",
       community: "",
-      genderRequirement: "",
+      genderRequirement: "All Genders",
       applicationLink: "",
       status: "active",
     },
@@ -232,7 +232,7 @@ export default function AddScholarshipForm({ isOpen, onClose }: AddScholarshipFo
                   <FormItem>
                     <FormLabel>Target Community</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., STEM Students, International Students" {...field} />
+                      <Input placeholder="e.g., STEM Students, International Students" {...field} value={field.value ?? ""} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -245,7 +245,7 @@ export default function AddScholarshipForm({ isOpen, onClose }: AddScholarshipFo
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Gender Requirements</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <Select onValueChange={field.onChange} value={field.value ?? ""}>
                       <FormControl>
                         <SelectTrigger>
                           <SelectValue placeholder="All Genders" />
@@ -271,7 +271,7 @@ export default function AddScholarshipForm({ isOpen, onClose }: AddScholarshipFo
                 <FormItem>
                   <FormLabel>Application Link</FormLabel>
                   <FormControl>
-                    <Input type="url" placeholder="https://example.com/apply" {...field} />
+                    <Input type="url" placeholder="https://example.com/apply" {...field} value={field.value ?? ""} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

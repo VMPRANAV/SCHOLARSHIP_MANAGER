@@ -2,15 +2,25 @@ import { scholarships, adminUsers, type Scholarship, type InsertScholarship, typ
 
 export interface IStorage {
   // Scholarship methods
-  getScholarships(filters?: { educationLevel?: string; status?: string; search?: string }): Promise<Scholarship[]>;
-  getScholarship(id: string): Promise<Scholarship | undefined>;
+  getScholarships(filters?: { 
+    educationLevel?: string; 
+    status?: string; 
+    search?: string;
+    amountRange?: [number, number];
+    deadlineRange?: [string, string];
+    community?: string[];
+    genderRequirement?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<Scholarship[]>;
+  getScholarship(id: string): Promise<Scholarship | null>;
   createScholarship(scholarship: InsertScholarship): Promise<Scholarship>;
-  updateScholarship(id: string, scholarship: Partial<InsertScholarship>): Promise<Scholarship | undefined>;
+  updateScholarship(id: string, scholarship: Partial<InsertScholarship>): Promise<Scholarship | null>;
   deleteScholarship(id: string): Promise<boolean>;
   
   // Admin methods
-  getAdminUser(id: string): Promise<AdminUser | undefined>;
-  getAdminUserByUsername(username: string): Promise<AdminUser | undefined>;
+  getAdminUser(id: string): Promise<AdminUser | null>;
+  getAdminUserByUsername(username: string): Promise<AdminUser | null>;
   createAdminUser(user: InsertAdminUser): Promise<AdminUser>;
 }
 
@@ -130,31 +140,99 @@ export class MemStorage implements IStorage {
     });
   }
 
-  async getScholarships(filters?: { educationLevel?: string; status?: string; search?: string }): Promise<Scholarship[]> {
+  async getScholarships(filters?: { 
+    educationLevel?: string; 
+    status?: string; 
+    search?: string;
+    amountRange?: [number, number];
+    deadlineRange?: [string, string];
+    community?: string[];
+    genderRequirement?: string;
+    sortBy?: string;
+    sortOrder?: 'asc' | 'desc';
+  }): Promise<Scholarship[]> {
     let result = Array.from(this.scholarships.values());
 
-    if (filters?.educationLevel) {
+    // Education Level filter - skip if "all" is selected
+    if (filters?.educationLevel && filters.educationLevel !== "all") {
       result = result.filter(s => s.educationLevel === filters.educationLevel);
     }
 
+    // Status filter
     if (filters?.status) {
       result = result.filter(s => s.status === filters.status);
     }
 
-    if (filters?.search) {
-      const searchLower = filters.search.toLowerCase();
+    // Search filter
+    if (filters?.search && filters.search.trim()) {
+      const searchLower = filters.search.toLowerCase().trim();
       result = result.filter(s => 
         s.name.toLowerCase().includes(searchLower) ||
         s.description.toLowerCase().includes(searchLower) ||
-        s.community?.toLowerCase().includes(searchLower)
+        (s.community && s.community.toLowerCase().includes(searchLower))
       );
+    }
+
+    // Amount range filter
+    if (filters?.amountRange && (filters.amountRange[0] > 0 || filters.amountRange[1] < 100000)) {
+      result = result.filter(s => {
+        const amount = parseFloat(s.amount);
+        return amount >= filters.amountRange![0] && amount <= filters.amountRange![1];
+      });
+    }
+
+    // Deadline range filter - only apply if both dates are provided
+    if (filters?.deadlineRange && filters.deadlineRange[0] && filters.deadlineRange[1]) {
+      result = result.filter(s => {
+        const deadline = new Date(s.applicationEndDate);
+        const fromDate = new Date(filters.deadlineRange![0]);
+        const toDate = new Date(filters.deadlineRange![1]);
+        return deadline >= fromDate && deadline <= toDate;
+      });
+    }
+
+    // Community filter - check if any of the selected communities match
+    if (filters?.community && filters.community.length > 0) {
+      result = result.filter(s => 
+        s.community && filters.community!.some(comm => 
+          s.community!.toLowerCase().includes(comm.toLowerCase())
+        )
+      );
+    }
+
+    // Gender requirement filter - skip if "All Genders" is selected
+    if (filters?.genderRequirement && filters.genderRequirement !== "All Genders") {
+      result = result.filter(s => s.genderRequirement === filters.genderRequirement);
+    }
+
+    // Sort results
+    if (filters?.sortBy) {
+      const sortField = filters.sortBy === 'deadline' ? 'applicationEndDate' : filters.sortBy;
+      const sortOrder = filters.sortOrder === 'desc' ? -1 : 1;
+      
+      result.sort((a, b) => {
+        let aValue: any = a[sortField as keyof Scholarship];
+        let bValue: any = b[sortField as keyof Scholarship];
+        
+        if (sortField === 'amount') {
+          aValue = parseFloat(aValue);
+          bValue = parseFloat(bValue);
+        } else if (sortField === 'applicationEndDate') {
+          aValue = new Date(aValue);
+          bValue = new Date(bValue);
+        }
+        
+        if (aValue < bValue) return -1 * sortOrder;
+        if (aValue > bValue) return 1 * sortOrder;
+        return 0;
+      });
     }
 
     return result;
   }
 
-  async getScholarship(id: string): Promise<Scholarship | undefined> {
-    return this.scholarships.get(id);
+  async getScholarship(id: string): Promise<Scholarship | null> {
+    return this.scholarships.get(id) || null;
   }
 
   async createScholarship(insertScholarship: InsertScholarship): Promise<Scholarship> {
@@ -174,9 +252,9 @@ export class MemStorage implements IStorage {
     return scholarship;
   }
 
-  async updateScholarship(id: string, updates: Partial<InsertScholarship>): Promise<Scholarship | undefined> {
+  async updateScholarship(id: string, updates: Partial<InsertScholarship>): Promise<Scholarship | null> {
     const existing = this.scholarships.get(id);
-    if (!existing) return undefined;
+    if (!existing) return null;
 
     const updated: Scholarship = { ...existing, ...updates };
     this.scholarships.set(id, updated);
@@ -187,14 +265,14 @@ export class MemStorage implements IStorage {
     return this.scholarships.delete(id);
   }
 
-  async getAdminUser(id: string): Promise<AdminUser | undefined> {
-    return this.adminUsers.get(id);
+  async getAdminUser(id: string): Promise<AdminUser | null> {
+    return this.adminUsers.get(id) || null;
   }
 
-  async getAdminUserByUsername(username: string): Promise<AdminUser | undefined> {
+  async getAdminUserByUsername(username: string): Promise<AdminUser | null> {
     return Array.from(this.adminUsers.values()).find(
       (user) => user.username === username,
-    );
+    ) || null;
   }
 
   async createAdminUser(insertUser: InsertAdminUser): Promise<AdminUser> {
