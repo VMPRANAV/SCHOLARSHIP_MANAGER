@@ -44,18 +44,18 @@ export type InsertAdminUser = z.infer<typeof insertAdminUserSchema>;
 export interface Scholarship {
   id: string;
   name: string;
-  organizationLogo: string | null;
+  organizationLogo?: string;
   amount: string;
   educationLevel: string;
   applicationEndDate: string;
   description: string;
   eligibility: string;
-  community: string | null;
-  genderRequirement: string | null;
-  applicationLink: string | null;
-  applicationFormPath: string | null;
+  community?: string;
+  genderRequirement?: string;
+  applicationLink?: string;
+  applicationFormPath?: string;
   status: string;
-  createdAt: Date | null;
+  createdAt: Date | string | null;
 }
 
 export interface AdminUser {

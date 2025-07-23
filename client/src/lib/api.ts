@@ -61,7 +61,7 @@ export const scholarshipApi = {
     }
   },
 
-  getById: async (id: number) => {
+  getById: async (id: string) => {
     try {
       const response = await fetch(`/api/scholarships/${id}`);
       if (!response.ok) {
@@ -77,10 +77,10 @@ export const scholarshipApi = {
   create: (data: FormData) =>
     apiRequest('POST', '/api/scholarships', data),
 
-  update: (id: number, data: FormData) =>
+  update: (id: string, data: FormData) =>
     apiRequest('PUT', `/api/scholarships/${id}`, data),
 
-  delete: (id: number) =>
+  delete: (id: string) =>
     apiRequest('DELETE', `/api/scholarships/${id}`),
 };
 

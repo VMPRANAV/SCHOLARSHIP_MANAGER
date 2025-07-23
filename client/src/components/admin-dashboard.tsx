@@ -50,7 +50,7 @@ export default function AdminDashboard() {
     },
   });
 
-  const handleDelete = (id: number) => {
+  const handleDelete = (id: string) => {
     if (confirm('Are you sure you want to delete this scholarship?')) {
       deleteMutation.mutate(id);
     }
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
                           <Button 
                             size="sm" 
                             variant="ghost"
-                            onClick={() => handleDelete(parseInt(scholarship.id))}
+                            onClick={() => handleDelete(scholarship.id)}
                             disabled={deleteMutation.isPending}
                             title="Delete scholarship"
                           >

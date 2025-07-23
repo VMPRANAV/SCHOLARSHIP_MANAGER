@@ -116,7 +116,7 @@ export default function AdminScholarshipForm({
       if (formFile) formData.append("applicationForm", formFile);
 
       if (scholarship) {
-        return scholarshipApi.update(parseInt(scholarship.id), formData);
+        return scholarshipApi.update(scholarship.id, formData);
       } else {
         return scholarshipApi.create(formData);
       }
@@ -430,4 +430,4 @@ export default function AdminScholarshipForm({
       </Form>
     </div>
   );
-} 
+}

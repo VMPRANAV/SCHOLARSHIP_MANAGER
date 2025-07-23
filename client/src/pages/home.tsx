@@ -90,8 +90,8 @@ export default function Home() {
       {/* Hero Section */}
       <section className="bg-gradient-to-br from-education-blue to-education-sky text-white py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6">Find Your Perfect Scholarship</h2>
-          <p className="text-xl text-blue-100 mb-8 max-w-3xl mx-auto">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-cyan-500">Find Your Perfect Scholarship</h2>
+          <p className="text-xl text-slate-700 mb-8 max-w-3xl mx-auto">
             Discover hundreds of scholarships and funding opportunities to support your educational journey. Your future starts here.
           </p>
           

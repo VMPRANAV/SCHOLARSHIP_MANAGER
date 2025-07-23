@@ -80,7 +80,7 @@ export default function EditScholarshipForm({ scholarship, isOpen, onClose }: Ed
       if (logoFile) formData.append('logo', logoFile);
       if (formFile) formData.append('applicationForm', formFile);
       
-      return scholarshipApi.update(parseInt(scholarship.id), formData);
+      return scholarshipApi.update(scholarship.id, formData);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['/api/scholarships'] });
