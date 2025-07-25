@@ -1,2 +1,2 @@
 # SCHOLARSHIP_MANAGER
-runs on the localhost 5000
+runs on the localhost 3000
