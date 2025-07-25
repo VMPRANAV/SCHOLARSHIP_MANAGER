@@ -13,8 +13,20 @@ if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, uploadsDir);
+  },
+  filename: (req, file, cb) => {
+    // Generate unique filename with original extension
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    const extension = path.extname(file.originalname);
+    cb(null, file.fieldname + '-' + uniqueSuffix + extension);
+  }
+});
+
 const upload = multer({
-  dest: uploadsDir,
+  storage: storage,
   limits: {
     fileSize: 10 * 1024 * 1024, // 10MB limit
   },
@@ -142,24 +154,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const id = req.params.id;
       const files = req.files as { [fieldname: string]: Express.Multer.File[] };
       
+      const database = getDatabase();
+      // Get existing scholarship to clean up old files
+      const existingScholarship = await database.getScholarship(id);
+      if (!existingScholarship) {
+        return res.status(404).json({ message: "Scholarship not found" });
+      }
+      
       const updates = { ...req.body };
       if (req.body.amount) {
         updates.amount = req.body.amount.toString();
       }
 
-      // Add file paths if new files were uploaded
+      // Add file paths if new files were uploaded and clean up old files
       if (files?.logo?.[0]) {
         updates.organizationLogo = `/uploads/${files.logo[0].filename}`;
+        // Clean up old logo file if it exists and is in uploads folder
+        if (existingScholarship.organizationLogo && existingScholarship.organizationLogo.startsWith('/uploads/')) {
+          const oldLogoPath = path.join(uploadsDir, path.basename(existingScholarship.organizationLogo));
+          if (fs.existsSync(oldLogoPath)) {
+            fs.unlinkSync(oldLogoPath);
+          }
+        }
       }
       if (files?.applicationForm?.[0]) {
         updates.applicationFormPath = `/uploads/${files.applicationForm[0].filename}`;
+        // Clean up old application form file if it exists and is in uploads folder
+        if (existingScholarship.applicationFormPath && existingScholarship.applicationFormPath.startsWith('/uploads/')) {
+          const oldFormPath = path.join(uploadsDir, path.basename(existingScholarship.applicationFormPath));
+          if (fs.existsSync(oldFormPath)) {
+            fs.unlinkSync(oldFormPath);
+          }
+        }
       }
 
-      const database = getDatabase();
       const scholarship = await database.updateScholarship(id, updates);
-      if (!scholarship) {
-        return res.status(404).json({ message: "Scholarship not found" });
-      }
       res.json(scholarship);
     } catch (error) {
       res.status(400).json({ message: error instanceof Error ? error.message : "Invalid update data" });
@@ -171,6 +200,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = req.params.id;
       const database = getDatabase();
+      
+      // Get scholarship to clean up files before deletion
+      const scholarship = await database.getScholarship(id);
+      if (!scholarship) {
+        return res.status(404).json({ message: "Scholarship not found" });
+      }
+      
+      // Clean up associated files
+      if (scholarship.organizationLogo && scholarship.organizationLogo.startsWith('/uploads/')) {
+        const logoPath = path.join(uploadsDir, path.basename(scholarship.organizationLogo));
+        if (fs.existsSync(logoPath)) {
+          fs.unlinkSync(logoPath);
+        }
+      }
+      if (scholarship.applicationFormPath && scholarship.applicationFormPath.startsWith('/uploads/')) {
+        const formPath = path.join(uploadsDir, path.basename(scholarship.applicationFormPath));
+        if (fs.existsSync(formPath)) {
+          fs.unlinkSync(formPath);
+        }
+      }
+      
       const success = await database.deleteScholarship(id);
       if (!success) {
         return res.status(404).json({ message: "Scholarship not found" });
