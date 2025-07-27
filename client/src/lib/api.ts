@@ -88,18 +88,3 @@ export const adminApi = {
   login: (credentials: { username: string; password: string }) =>
     apiRequest('POST', '/api/admin/login', credentials),
 };
-
-export const kprApi = {
-  downloadForm: async (type: 'merit' | 'sports') => {
-    try {
-      const response = await fetch(`/api/kpr/${type}/download`);
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-      return await response.json();
-    } catch (error) {
-      console.error('Error downloading form:', error);
-      throw new Error('Failed to download form.');
-    }
-  },
-};

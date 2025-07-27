@@ -15,7 +15,7 @@ export async function apiRequest(
   const isFormData = data instanceof FormData;
   const res = await fetch(url, {
     method,
-    headers:isFormData ? {} : { "Content-Type": "application/json" },
+    headers: isFormData ? {} : { "Content-Type": "application/json" },
     body: isFormData ? data : (data ? JSON.stringify(data) : undefined),
     credentials: "include",
   });

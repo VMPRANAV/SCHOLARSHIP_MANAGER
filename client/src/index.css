@@ -2,105 +2,273 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: hsl(0, 0%, 100%);
-  --foreground: hsl(20, 14.3%, 4.1%);
-  --muted: hsl(60, 4.8%, 95.9%);
-  --muted-foreground: hsl(25, 5.3%, 44.7%);
-  --popover: hsl(0, 0%, 100%);
-  --popover-foreground: hsl(20, 14.3%, 4.1%);
-  --card: hsl(0, 0%, 100%);
-  --card-foreground: hsl(20, 14.3%, 4.1%);
-  --border: hsl(20, 5.9%, 90%);
-  --input: hsl(20, 5.9%, 90%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(60, 4.8%, 95.9%);
-  --secondary-foreground: hsl(24, 9.8%, 10%);
-  --accent: hsl(60, 4.8%, 95.9%);
-  --accent-foreground: hsl(24, 9.8%, 10%);
-  --destructive: hsl(0, 84.2%, 60.2%);
-  --destructive-foreground: hsl(60, 9.1%, 97.8%);
-  --ring: hsl(20, 14.3%, 4.1%);
-  --radius: 0.5rem;
-  
-  /* Custom education theme colors */
-  --education-blue: hsl(217, 91%, 60%);
-  --education-sky: hsl(200, 98%, 39%);
-  --slate-50: hsl(210, 40%, 98%);
-  --slate-100: hsl(210, 40%, 96%);
-  --slate-200: hsl(214, 32%, 91%);
-  --slate-300: hsl(213, 27%, 84%);
-  --slate-400: hsl(215, 20%, 65%);
-  --slate-500: hsl(215, 16%, 47%);
-  --slate-600: hsl(215, 19%, 35%);
-  --slate-700: hsl(215, 25%, 27%);
-  --slate-800: hsl(217, 33%, 17%);
-  --slate-900: hsl(222, 84%, 5%);
-  --emerald-100: hsl(149, 80%, 90%);
-  --emerald-600: hsl(158, 64%, 52%);
-  --emerald-700: hsl(158, 64%, 42%);
-}
-
-.dark {
-  --background: hsl(240, 10%, 3.9%);
-  --foreground: hsl(0, 0%, 98%);
-  --muted: hsl(240, 3.7%, 15.9%);
-  --muted-foreground: hsl(240, 5%, 64.9%);
-  --popover: hsl(240, 10%, 3.9%);
-  --popover-foreground: hsl(0, 0%, 98%);
-  --card: hsl(240, 10%, 3.9%);
-  --card-foreground: hsl(0, 0%, 98%);
-  --border: hsl(240, 3.7%, 15.9%);
-  --input: hsl(240, 3.7%, 15.9%);
-  --primary: hsl(207, 90%, 54%);
-  --primary-foreground: hsl(211, 100%, 99%);
-  --secondary: hsl(240, 3.7%, 15.9%);
-  --secondary-foreground: hsl(0, 0%, 98%);
-  --accent: hsl(240, 3.7%, 15.9%);
-  --accent-foreground: hsl(0, 0%, 98%);
-  --destructive: hsl(0, 62.8%, 30.6%);
-  --destructive-foreground: hsl(0, 0%, 98%);
-  --ring: hsl(240, 4.9%, 83.9%);
-  --radius: 0.5rem;
-}
-
 @layer base {
-  * {
-    @apply border-border;
+  body {
+    @apply bg-gradient-to-br from-slate-900 via-slate-800 to-black min-h-screen;
+    background-attachment: fixed;
+    position: relative;
+    overflow-x: hidden;
   }
 
-  body {
-    @apply font-sans antialiased bg-background text-foreground;
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      45deg,
+      rgba(59, 130, 246, 0.05) 0%,
+      transparent 25%,
+      transparent 75%,
+      rgba(29, 78, 216, 0.05) 100%
+    );
+    animation: gradient-shift 8s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: 
+      radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(29, 78, 216, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(37, 99, 235, 0.06) 0%, transparent 50%);
+    animation: floating-orbs 12s ease-in-out infinite;
+    pointer-events: none;
+    z-index: -1;
   }
 }
 
 @layer utilities {
-  .education-blue {
-    color: var(--education-blue);
+  /* Custom 3D Shadow Effects */
+  .shadow-3xl {
+    box-shadow: 
+      0 35px 60px -12px rgba(0, 0, 0, 0.25),
+      0 25px 25px -5px rgba(0, 0, 0, 0.1),
+      0 0 0 1px rgba(255, 255, 255, 0.05);
   }
-  
-  .bg-education-blue {
-    background-color: var(--education-blue);
+
+  .shadow-4xl {
+    box-shadow: 
+      0 45px 80px -12px rgba(0, 0, 0, 0.35),
+      0 35px 35px -5px rgba(0, 0, 0, 0.15),
+      0 0 0 1px rgba(255, 255, 255, 0.1);
   }
-  
-  .border-education-blue {
-    border-color: var(--education-blue);
+
+  /* Website Background Animation */
+  .bg-website-gradient {
+    background: linear-gradient(135deg, 
+      rgb(15, 23, 42) 0%,
+      rgb(30, 41, 59) 25%,
+      rgb(51, 65, 85) 50%,
+      rgb(30, 41, 59) 75%,
+      rgb(0, 0, 0) 100%
+    );
+    background-size: 400% 400%;
+    animation: gradient-bg-shift 15s ease-in-out infinite;
   }
-  
-  .hover\:bg-education-blue:hover {
-    background-color: var(--education-blue);
+
+  @keyframes gradient-bg-shift {
+    0%, 100% {
+      background-position: 0% 50%;
+    }
+    25% {
+      background-position: 100% 25%;
+    }
+    50% {
+      background-position: 100% 100%;
+    }
+    75% {
+      background-position: 0% 75%;
+    }
   }
-  
-  .focus\:ring-education-blue:focus {
-    --tw-ring-color: var(--education-blue);
+
+  @keyframes gradient-shift {
+    0%, 100% {
+      background: linear-gradient(
+        45deg,
+        rgba(59, 130, 246, 0.05) 0%,
+        transparent 25%,
+        transparent 75%,
+        rgba(29, 78, 216, 0.05) 100%
+      );
+    }
+    25% {
+      background: linear-gradient(
+        135deg,
+        rgba(29, 78, 216, 0.08) 0%,
+        transparent 30%,
+        transparent 70%,
+        rgba(59, 130, 246, 0.06) 100%
+      );
+    }
+    50% {
+      background: linear-gradient(
+        225deg,
+        rgba(37, 99, 235, 0.07) 0%,
+        transparent 35%,
+        transparent 65%,
+        rgba(59, 130, 246, 0.08) 100%
+      );
+    }
+    75% {
+      background: linear-gradient(
+        315deg,
+        rgba(59, 130, 246, 0.06) 0%,
+        transparent 25%,
+        transparent 75%,
+        rgba(29, 78, 216, 0.07) 100%
+      );
+    }
   }
-  
-  .text-education-sky {
-    color: var(--education-sky);
+
+  @keyframes floating-orbs {
+    0%, 100% {
+      transform: translateY(0px) scale(1);
+      opacity: 0.6;
+    }
+    25% {
+      transform: translateY(-20px) scale(1.1);
+      opacity: 0.8;
+    }
+    50% {
+      transform: translateY(-10px) scale(0.9);
+      opacity: 0.4;
+    }
+    75% {
+      transform: translateY(-30px) scale(1.05);
+      opacity: 0.7;
+    }
   }
-  
-  .bg-education-sky {
-    background-color: var(--education-sky);
+
+  /* Cyan Flickering Animation */
+  .animate-pulse-cyan {
+    animation: pulse-cyan 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-cyan {
+    0%, 100% {
+      border-color: rgb(34 211 238); /* cyan-400 */
+      box-shadow: 
+        0 35px 60px -12px rgba(0, 0, 0, 0.25),
+        0 25px 25px -5px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 0 20px rgba(34, 211, 238, 0.3);
+    }
+    50% {
+      border-color: rgb(6 182 212); /* cyan-500 */
+      box-shadow: 
+        0 35px 60px -12px rgba(0, 0, 0, 0.25),
+        0 25px 25px -5px rgba(0, 0, 0, 0.1),
+        0 0 0 1px rgba(255, 255, 255, 0.05),
+        0 0 30px rgba(6, 182, 212, 0.5),
+        0 0 40px rgba(6, 182, 212, 0.2);
+    }
+  }
+
+  /* Royal Blue Moving Animation - Updated for dark theme */
+  .animate-pulse-royal-blue {
+    animation: pulse-royal-blue-dark 4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-royal-blue-dark {
+    0%, 100% {
+      border-color: rgb(59 130 246); /* blue-500 */
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.4),
+        0 15px 25px -5px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(59, 130, 246, 0.1),
+        0 0 30px rgba(59, 130, 246, 0.3);
+    }
+    25% {
+      border-color: rgb(37 99 235); /* blue-600 */
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.4),
+        0 15px 25px -5px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(37, 99, 235, 0.15),
+        0 0 40px rgba(37, 99, 235, 0.4),
+        0 0 60px rgba(37, 99, 235, 0.2);
+    }
+    50% {
+      border-color: rgb(29 78 216); /* blue-700 */
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.4),
+        0 15px 25px -5px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(29, 78, 216, 0.2),
+        0 0 50px rgba(29, 78, 216, 0.5),
+        0 0 80px rgba(29, 78, 216, 0.3);
+    }
+    75% {
+      border-color: rgb(37 99 235); /* blue-600 */
+      box-shadow: 
+        0 25px 50px -12px rgba(0, 0, 0, 0.4),
+        0 15px 25px -5px rgba(0, 0, 0, 0.3),
+        0 0 0 1px rgba(37, 99, 235, 0.15),
+        0 0 40px rgba(37, 99, 235, 0.4),
+        0 0 60px rgba(37, 99, 235, 0.2);
+    }
+  }
+
+  /* Slow Spin Animation for Border */
+  .animate-spin-slow {
+    animation: spin 8s linear infinite;
+  }
+
+  /* Pulsing Border Animation - Updated for dark theme */
+  .animate-pulse-border {
+    animation: pulse-border-dark 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-border-dark {
+    0%, 100% {
+      opacity: 0.2;
+      transform: translateX(-100%);
+    }
+    50% {
+      opacity: 0.6;
+      transform: translateX(100%);
+    }
+  }
+
+  /* Additional utility class for main content areas */
+  .bg-dark-overlay {
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Enhanced Floating Shadow Effects */
+  .shadow-floating {
+    box-shadow: 
+      0 25px 60px -12px rgba(0, 0, 0, 0.4),
+      0 20px 30px -5px rgba(0, 0, 0, 0.2),
+      0 10px 20px -5px rgba(59, 130, 246, 0.3),
+      0 0 0 1px rgba(255, 255, 255, 0.1),
+      0 0 40px rgba(59, 130, 246, 0.2);
+  }
+
+  .shadow-floating-hover {
+    box-shadow: 
+      0 35px 80px -12px rgba(0, 0, 0, 0.5),
+      0 30px 40px -5px rgba(0, 0, 0, 0.3),
+      0 15px 30px -5px rgba(59, 130, 246, 0.4),
+      0 0 0 1px rgba(255, 255, 255, 0.15),
+      0 0 60px rgba(59, 130, 246, 0.4),
+      0 0 100px rgba(59, 130, 246, 0.2);
+  }
+
+  /* Enhanced component floating effects */
+  .hover\:shadow-floating:hover {
+    box-shadow: 
+      0 20px 40px -8px rgba(0, 0, 0, 0.3),
+      0 10px 20px -3px rgba(0, 0, 0, 0.15),
+      0 5px 15px -3px rgba(59, 130, 246, 0.2),
+      0 0 30px rgba(59, 130, 246, 0.15);
   }
 }

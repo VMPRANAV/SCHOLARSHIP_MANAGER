@@ -105,14 +105,10 @@ export default function AdminDashboard() {
   const totalAmount = scholarships.reduce((sum: number, s: Scholarship) => sum + parseFloat(s.amount), 0);
 
   return (
-    <div className="flex-1 bg-slate-100 overflow-auto">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b border-slate-200 p-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-slate-800">Scholarship Management</h2>
-            <p className="text-slate-600">Manage scholarship listings and applications</p>
-          </div>
+    <div className="flex-1 bg-dark-overlay rounded-2xl p-8 m-4">
+      <div className="p-6">
+        <div className="flex justify-between items-center mb-8">
+          <h2 className="text-2xl font-bold text-white">Dashboard Overview</h2>
           <Button 
             onClick={() => setIsAddFormOpen(true)}
             className="bg-education-blue text-white hover:bg-blue-800"
@@ -121,12 +117,10 @@ export default function AdminDashboard() {
             Add New Scholarship
           </Button>
         </div>
-      </div>
 
-      {/* Dashboard Stats */}
-      <div className="p-6">
+        {/* Stats Grid - Update card backgrounds */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200">
+          <div className="bg-dark-overlay rounded-lg p-6 shadow-sm border border-blue-500/30">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-600 text-sm">Total Scholarships</p>
@@ -138,7 +132,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200">
+          <div className="bg-dark-overlay rounded-lg p-6 shadow-sm border border-blue-500/30">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-600 text-sm">Active Scholarships</p>
@@ -150,7 +144,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200">
+          <div className="bg-dark-overlay rounded-lg p-6 shadow-sm border border-blue-500/30">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-600 text-sm">Total Amount</p>
@@ -168,7 +162,7 @@ export default function AdminDashboard() {
             </div>
           </div>
           
-          <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200">
+          <div className="bg-dark-overlay rounded-lg p-6 shadow-sm border border-blue-500/30">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-slate-600 text-sm">Average Amount</p>
@@ -183,8 +177,8 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        {/* Scholarship Management Table */}
-        <div className="bg-white rounded-lg shadow-sm border border-slate-200">
+        {/* Scholarship Management Table - Update background */}
+        <div className="bg-dark-overlay rounded-lg shadow-sm border border-blue-500/30">
           <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center">
             <h3 className="text-lg font-semibold text-slate-800">All Scholarships</h3>
             <div className="flex space-x-3">

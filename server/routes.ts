@@ -52,7 +52,14 @@ const upload = multer({
 });
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Serve static files from public directory
+  app.use(express.static(path.join(process.cwd(), 'public')));
+  
   // Serve uploaded files
+  const uploadsDir = path.join(process.cwd(), 'uploads');
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
   app.use('/uploads', express.static(uploadsDir));
 
   // Get all scholarships with optional filters
@@ -247,19 +254,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       res.status(500).json({ message: "Login failed" });
     }
-  });
-
-  // KPR scholarship forms download
-  app.get("/api/kpr/:type/download", (req, res) => {
-    const { type } = req.params;
-    const formPath = path.join(process.cwd(), 'kpr-forms', `${type}-application.pdf`);
-    
-    // In a real application, you'd have actual PDF files
-    // For now, we'll return a placeholder response
-    res.json({ 
-      message: `${type} application form download would start here`,
-      downloadUrl: `/api/kpr/${type}/form.pdf`
-    });
   });
 
   const httpServer = createServer(app);
