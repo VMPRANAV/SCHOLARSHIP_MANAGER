@@ -212,10 +212,11 @@ export class MongoStorage implements IStorage {
 
 // Always use MongoStorage for storage
 const mongoUri = process.env.MONGODB_URI;
-const mongoDbName = mongoUri?.split('/').pop() || 'scholarshiptracker';
+const mongoDbName ='ScholarshipTracker';
 if (!mongoUri) {
   throw new Error("MONGODB_URI is not set. Please set it in your .env file.");
 }
+
 const storage: IStorage = new MongoStorage(mongoUri, mongoDbName);
 
 // Create default admin user if not exists

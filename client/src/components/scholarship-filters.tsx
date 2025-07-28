@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Filter, ChevronDown, ChevronUp } from "lucide-react";
+import { X, Filter, ChevronDown, ChevronUp, Search, DollarSign, Calendar, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -117,38 +117,44 @@ export default function ScholarshipFilters({
   };
 
   return (
-    <Card className="mb-6">
+    <Card className="mb-8 shadow-soft border-slate-200">
       <Collapsible open={isExpanded} onOpenChange={setIsExpanded}>
-        <CardHeader className="pb-4 relative">
+        <CardHeader className="pb-4 relative bg-slate-50 rounded-t-lg">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Filter className="h-5 w-5 text-slate-600" />
-              <CardTitle className="text-lg">Filters</CardTitle>
+            <div className="flex items-center space-x-3">
+              <div className="inline-flex items-center justify-center w-8 h-8 bg-sky-100 rounded-lg">
+                <Filter className="h-4 w-4 text-sky-700" />
+              </div>
+              <div>
+                <CardTitle className="text-lg text-slate-800">Advanced Filters</CardTitle>
+                <p className="text-sm text-slate-600">Refine your scholarship search</p>
+              </div>
               {hasActiveFilters() && (
-                <Badge variant="secondary" className="ml-2">
+                <Badge variant="secondary" className="ml-2 bg-sky-100 text-sky-700 border-sky-200">
                   {getActiveFilterCount()} active
                 </Badge>
               )}
             </div>
-            <div className="flex items-center space-x-2">
-              <p className="text-sm text-slate-600">
-                {totalResults} results
+            <div className="flex items-center space-x-3">
+              <p className="text-sm text-slate-600 font-medium">
+                {totalResults} results found
               </p>
               {hasActiveFilters() && (
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onClearFilters}
-                  className="text-red-600 hover:text-red-700"
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <X className="h-4 w-4 mr-1" />
-                  Clear
+                  Clear All
                 </Button>
               )}
               <CollapsibleTrigger asChild>
                 <Button
                   variant="ghost"
                   size="sm"
+                  className="text-slate-600 hover:text-sky-700 hover:bg-sky-50"
                 >
                   {isExpanded ? (
                     <ChevronUp className="h-4 w-4" />
@@ -161,32 +167,33 @@ export default function ScholarshipFilters({
           </div>
         </CardHeader>
         <CollapsibleContent>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-8 p-6">
             {/* Search */}
             <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
-                Search
+              <label className="text-sm font-semibold text-slate-700 mb-3 block flex items-center">
+                <Search className="h-4 w-4 mr-2 text-sky-600" />
+                Search Scholarships
               </label>
               <Input
-                placeholder="Search scholarships by name, description, or community..."
+                placeholder="Search by name, description, organization, or keywords..."
                 value={localFilters.search}
                 onChange={(e) => handleFilterChange('search', e.target.value)}
-                className="w-full"
+                className="w-full border-slate-200 focus:border-sky-500 focus:ring-sky-500"
               />
             </div>
 
             {/* Basic Filters Row */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {/* Education Level */}
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-semibold text-slate-700 mb-3 block">
                   Education Level
                 </label>
                 <Select
                   value={localFilters.educationLevel}
                   onValueChange={(value) => handleFilterChange('educationLevel', value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="border-slate-200 focus:border-sky-500 focus:ring-sky-500">
                     <SelectValue placeholder="Select level" />
                   </SelectTrigger>
                   <SelectContent>
@@ -201,14 +208,14 @@ export default function ScholarshipFilters({
 
               {/* Gender Requirement */}
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-semibold text-slate-700 mb-3 block">
                   Gender Requirement
                 </label>
                 <Select
                   value={localFilters.genderRequirement}
                   onValueChange={(value) => handleFilterChange('genderRequirement', value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="border-slate-200 focus:border-sky-500 focus:ring-sky-500">
                     <SelectValue placeholder="Select gender" />
                   </SelectTrigger>
                   <SelectContent>
@@ -223,14 +230,14 @@ export default function ScholarshipFilters({
 
               {/* Sort By */}
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-semibold text-slate-700 mb-3 block">
                   Sort By
                 </label>
                 <Select
                   value={localFilters.sortBy}
                   onValueChange={(value) => handleFilterChange('sortBy', value)}
                 >
-                  <SelectTrigger>
+                  <SelectTrigger className="border-slate-200 focus:border-sky-500 focus:ring-sky-500">
                     <SelectValue placeholder="Sort by" />
                   </SelectTrigger>
                   <SelectContent>
@@ -246,8 +253,9 @@ export default function ScholarshipFilters({
 
             {/* Amount Range */}
             <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
-                Amount Range: ${localFilters.amountRange[0].toLocaleString()} - ${localFilters.amountRange[1].toLocaleString()}
+              <label className="text-sm font-semibold text-slate-700 mb-3 block flex items-center">
+                <DollarSign className="h-4 w-4 mr-2 text-sky-600" />
+                Amount Range
               </label>
               <Slider
                 value={localFilters.amountRange}
@@ -264,40 +272,45 @@ export default function ScholarshipFilters({
             </div>
 
             {/* Deadline Range */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-semibold text-slate-700 mb-3 block flex items-center">
+                  <Calendar className="h-4 w-4 mr-2 text-sky-600" />
                   Deadline From
                 </label>
                 <Input
                   type="date"
                   value={localFilters.deadlineRange[0] || ''}
                   onChange={(e) => handleFilterChange('deadlineRange', [e.target.value, localFilters.deadlineRange[1]])}
+                  className="w-full border-slate-200 focus:border-sky-500 focus:ring-sky-500"
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-slate-700 mb-2 block">
+                <label className="text-sm font-semibold text-slate-700 mb-3 block flex items-center">
+                  <Calendar className="h-4 w-4 mr-2 text-sky-600" />
                   Deadline To
                 </label>
                 <Input
                   type="date"
                   value={localFilters.deadlineRange[1] || ''}
                   onChange={(e) => handleFilterChange('deadlineRange', [localFilters.deadlineRange[0], e.target.value])}
+                  className="w-full border-slate-200 focus:border-sky-500 focus:ring-sky-500"
                 />
               </div>
             </div>
 
             {/* Community Tags */}
             <div>
-              <label className="text-sm font-medium text-slate-700 mb-2 block">
+              <label className="text-sm font-semibold text-slate-700 mb-3 block flex items-center">
+                <Users className="h-4 w-4 mr-2 text-sky-600" />
                 Community
               </label>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex flex-wrap gap-3">
                 {COMMUNITIES.map((community) => (
                   <Badge
                     key={community}
                     variant={localFilters.community.includes(community) ? "default" : "outline"}
-                    className="cursor-pointer hover:bg-slate-100"
+                    className="cursor-pointer hover:bg-sky-100 text-sky-700 border-sky-200"
                     onClick={() => handleCommunityToggle(community)}
                   >
                     {community}
@@ -308,26 +321,29 @@ export default function ScholarshipFilters({
 
             {/* Active Filters Display */}
             {hasActiveFilters() && (
-              <div className="pt-4 border-t border-slate-200">
-                <h4 className="text-sm font-medium text-slate-700 mb-2">Active Filters:</h4>
-                <div className="flex flex-wrap gap-2">
+              <div className="pt-6 border-t border-slate-200">
+                <h4 className="text-sm font-semibold text-slate-700 mb-3 block flex items-center">
+                  <Filter className="h-4 w-4 mr-2 text-sky-600" />
+                  Active Filters
+                </h4>
+                <div className="flex flex-wrap gap-3">
                   {localFilters.search && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-200">
                       Search: "{localFilters.search}"
                     </Badge>
                   )}
                   {localFilters.educationLevel && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-200">
                       Level: {localFilters.educationLevel}
                     </Badge>
                   )}
                   {(localFilters.amountRange[0] > 0 || localFilters.amountRange[1] < 100000) && (
-                    <Badge variant="secondary" className="text-xs">
+                    <Badge variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-200">
                       Amount: ${localFilters.amountRange[0].toLocaleString()} - ${localFilters.amountRange[1].toLocaleString()}
                     </Badge>
                   )}
                   {localFilters.community.map((community) => (
-                    <Badge key={community} variant="secondary" className="text-xs">
+                    <Badge key={community} variant="secondary" className="text-xs bg-sky-100 text-sky-700 border-sky-200">
                       {community}
                     </Badge>
                   ))}

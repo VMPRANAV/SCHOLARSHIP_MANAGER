@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Search, ALargeSmall, List } from "lucide-react";
+import { Search, ALargeSmall, List, Award, Users, Calendar, DollarSign } from "lucide-react";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import ScholarshipCard from "@/components/scholarship-card";
@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useToast } from "@/hooks/use-toast"; // Import useToast
+import { useToast } from "@/hooks/use-toast";
 import { scholarshipApi } from "@/lib/api";
 import type { Scholarship } from "@shared/schema";
 
@@ -20,7 +20,7 @@ export default function Home() {
     search: "",
     educationLevel: "all",
     amountRange: [0, 100000],
-    deadlineRange: [null, null], // Initialize with Date | null
+    deadlineRange: [null, null],
     community: [],
     genderRequirement: "All Genders",
     sortBy: "name",
@@ -29,7 +29,7 @@ export default function Home() {
   const [selectedScholarship, setSelectedScholarship] = useState<Scholarship | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-  const { toast } = useToast(); // Initialize useToast
+  const { toast } = useToast();
 
   // Convert Date objects to strings for API calls
   const apiFilters = {
@@ -65,7 +65,7 @@ export default function Home() {
       search: "",
       educationLevel: "all",
       amountRange: [0, 100000],
-      deadlineRange: [null, null], // Reset to Date | null
+      deadlineRange: [null, null],
       community: [],
       genderRequirement: "All Genders",
       sortBy: "name",
@@ -88,27 +88,38 @@ export default function Home() {
       <Header />
       
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-education-blue to-education-sky text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 text-cyan-500">Find Your Perfect Scholarship</h2>
-          <p className="text-xl text-slate-700 mb-8 max-w-3xl mx-auto">
-            Discover hundreds of scholarships and funding opportunities to support your educational journey. Your future starts here.
-          </p>
+      <section className="gradient-bg text-white py-20 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black/10"></div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <div className="mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 rounded-full mb-6">
+              <Award className="h-8 w-8 text-white" />
+            </div>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+              Find Your Perfect
+              <span className="block text-sky-100">Scholarship</span>
+            </h1>
+            <p className="text-xl text-sky-100 mb-8 max-w-3xl mx-auto leading-relaxed">
+              Discover hundreds of scholarships and funding opportunities to support your educational journey. 
+              Your future starts here with our comprehensive scholarship database.
+            </p>
+          </div>
           
           {/* Search and Filter Bar */}
-          <div className="bg-white rounded-xl p-6 shadow-lg max-w-4xl mx-auto">
+          <div className="bg-white rounded-2xl p-8 shadow-medium max-w-4xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="md:col-span-2">
+              <div className="md:col-span-2 relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-5 w-5" />
                 <Input
                   type="text"
-                  placeholder="Search scholarships..."
+                  placeholder="Search scholarships by name, organization, or keywords..."
                   value={filters.search}
                   onChange={(e) => handleFiltersChange({ ...filters, search: e.target.value })}
-                  className="w-full text-slate-800"
+                  className="w-full pl-10 text-slate-800 border-slate-200 focus:border-sky-500 focus:ring-sky-500"
                 />
               </div>
               <Select value={filters.educationLevel} onValueChange={(value) => handleFiltersChange({ ...filters, educationLevel: value })}>
-                <SelectTrigger className="text-slate-800">
+                <SelectTrigger className="text-slate-800 border-slate-200 focus:border-sky-500 focus:ring-sky-500">
                   <SelectValue placeholder="Education Level" />
                 </SelectTrigger>
                 <SelectContent>
@@ -124,8 +135,37 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Stats Section */}
+      <section className="py-12 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-sky-100 rounded-xl mb-4">
+                <Award className="h-6 w-6 text-sky-700" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">{scholarships.length}+</h3>
+              <p className="text-slate-600">Available Scholarships</p>
+            </div>
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-sky-100 rounded-xl mb-4">
+                <Users className="h-6 w-6 text-sky-700" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">1000+</h3>
+              <p className="text-slate-600">Students Helped</p>
+            </div>
+            <div className="text-center">
+              <div className="inline-flex items-center justify-center w-12 h-12 bg-sky-100 rounded-xl mb-4">
+                <DollarSign className="h-6 w-6 text-sky-700" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-800 mb-2">$5M+</h3>
+              <p className="text-slate-600">Total Funding</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Main Content */}
-      <main id="scholarships" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main id="scholarships" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Advanced Filters */}
         <ScholarshipFilters
           filters={filters}
@@ -136,18 +176,18 @@ export default function Home() {
 
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h3 className="text-2xl font-bold text-slate-800 mb-2">Available Scholarships</h3>
+            <h2 className="text-3xl font-bold text-slate-800 mb-2">Available Scholarships</h2>
             <p className="text-slate-600">
-              {isLoading ? 'Loading...' : `Showing ${scholarships.length} scholarships`}
+              {isLoading ? 'Loading scholarships...' : `Showing ${scholarships.length} scholarships`}
             </p>
           </div>
           <div className="flex items-center space-x-4">
-            <div className="flex border border-slate-300 rounded-lg overflow-hidden">
+            <div className="flex border border-slate-300 rounded-lg overflow-hidden shadow-soft">
               <Button
                 variant={viewMode === 'grid' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('grid')}
-                className={viewMode === 'grid' ? 'bg-education-blue' : ''}
+                className={viewMode === 'grid' ? 'bg-sky-700 text-white' : 'text-slate-600 hover:text-sky-700'}
               >
                 <ALargeSmall className="h-4 w-4" />
               </Button>
@@ -155,7 +195,7 @@ export default function Home() {
                 variant={viewMode === 'list' ? 'default' : 'ghost'}
                 size="sm"
                 onClick={() => setViewMode('list')}
-                className={viewMode === 'list' ? 'bg-education-blue' : ''}
+                className={viewMode === 'list' ? 'bg-sky-700 text-white' : 'text-slate-600 hover:text-sky-700'}
               >
                 <List className="h-4 w-4" />
               </Button>
@@ -167,7 +207,7 @@ export default function Home() {
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+              <div key={i} className="bg-white rounded-xl shadow-soft border border-slate-200 p-6">
                 <div className="flex items-start justify-between mb-4">
                   <Skeleton className="w-12 h-12 rounded-lg" />
                   <Skeleton className="w-16 h-6 rounded-full" />
@@ -186,9 +226,18 @@ export default function Home() {
             ))}
           </div>
         ) : scholarships.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-slate-600 text-lg">No scholarships found matching your criteria.</p>
-            <p className="text-slate-500 mt-2">Try adjusting your search filters or browse all scholarships.</p>
+          <div className="text-center py-16">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 rounded-full mb-6">
+              <Search className="h-8 w-8 text-slate-400" />
+            </div>
+            <h3 className="text-xl font-semibold text-slate-800 mb-2">No scholarships found</h3>
+            <p className="text-slate-600 mb-4">No scholarships match your current search criteria.</p>
+            <Button 
+              onClick={handleClearFilters}
+              className="bg-sky-700 text-white hover:bg-sky-800"
+            >
+              Clear Filters
+            </Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
